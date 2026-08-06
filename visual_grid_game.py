@@ -260,7 +260,7 @@ if __name__ == "__main__":
         height=12,
         num_food=15,
         num_opponents=0,
-        agent_type="model"
+        agent_type="simple"
     )
 
     
