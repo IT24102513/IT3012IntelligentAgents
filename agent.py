@@ -7,7 +7,7 @@ class SearchAgent:
 
     def __init__(self):
         self.plan = []
-        self.active_algo = "DFS"
+        self.active_algo = "UCS"
         
 
     # -------------------------------------------------
