@@ -7,7 +7,7 @@ class SearchAgent:
 
     def __init__(self):
         self.plan = []
-        self.active_algo = "BFS"
+        self.active_algo = "DFS"
         
 
     # -------------------------------------------------
@@ -269,3 +269,5 @@ class SearchAgent:
         # One step counter-clockwise
         else:
             return "turn_left"
+
+        
