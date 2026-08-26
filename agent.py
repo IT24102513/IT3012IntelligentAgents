@@ -179,6 +179,115 @@ class SearchAgent:
                     )
 
         return []
+
+        # -------------------------------------------------
+    # A* Search
+    # -------------------------------------------------
+    def astar_search(
+        self,
+        start_pos,
+        goal_pos,
+        walls,
+        grid_size,
+        heuristic_type="manhattan"
+    ):
+
+        # Priority queue
+        frontier = []
+
+        # States that have already been explored
+        reached_states = set()
+
+        # Starting node
+        g_cost = 0
+
+        # Calculate h(n)
+        if heuristic_type == "manhattan":
+            h_cost = self.manhattan_distance(
+                start_pos,
+                goal_pos
+            )
+        else:
+            h_cost = self.euclidean_distance(
+                start_pos,
+                goal_pos
+            )
+
+        # f(n) = g(n) + h(n)
+        f_cost = g_cost + h_cost
+
+        # (f_cost, g_cost, current_pos, path_taken)
+        heapq.heappush(
+            frontier,
+            (
+                f_cost,
+                g_cost,
+                start_pos,
+                []
+            )
+        )
+
+        # Process nodes
+        while frontier:
+
+            f_cost, g_cost, current_pos, path_taken = (
+                heapq.heappop(frontier)
+            )
+
+            # Goal reached
+            if current_pos == goal_pos:
+                return path_taken
+
+            # Mark current node as reached
+            if current_pos in reached_states:
+                continue
+
+            reached_states.add(current_pos)
+
+            # Expand neighbours
+            for next_position, action in self.get_neighbors(
+                current_pos,
+                grid_size,
+                walls
+            ):
+
+                # Ignore already reached states
+                if next_position in reached_states:
+                    continue
+
+                # g(new) = g(current) + 1
+                new_g_cost = g_cost + 1
+
+                # Calculate h(new)
+                if heuristic_type == "manhattan":
+                    new_h_cost = self.manhattan_distance(
+                        next_position,
+                        goal_pos
+                    )
+                else:
+                    new_h_cost = self.euclidean_distance(
+                        next_position,
+                        goal_pos
+                    )
+
+                # f(new) = g(new) + h(new)
+                new_f_cost = new_g_cost + new_h_cost
+
+                # Add action to the path
+                new_path = path_taken + [action]
+
+                # Add new node to priority queue
+                heapq.heappush(
+                    frontier,
+                    (
+                        new_f_cost,
+                        new_g_cost,
+                        next_position,
+                        new_path
+                    )
+                )
+
+        return []
     
     # -------------------------------------------------
     # Convert search direction into environment actions
@@ -294,10 +403,21 @@ class SearchAgent:
             return "turn_left"
         
 if __name__ == "__main__":
+
     agent = SearchAgent()
 
-    pos = (0, 0)
-    goal = (3, 4)
+    start = (0, 0)
+    goal = (3, 3)
 
-    print("Manhattan:", agent.manhattan_distance(pos, goal))
-    print("Euclidean:", agent.euclidean_distance(pos, goal))
+    grid_size = (5, 5)
+    walls = set()
+
+    path = agent.astar_search(
+        start,
+        goal,
+        walls,
+        grid_size,
+        heuristic_type="manhattan"
+    )
+
+    print("A* path:", path)
