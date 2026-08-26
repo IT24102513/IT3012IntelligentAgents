@@ -7,7 +7,7 @@ class SearchAgent:
 
     def __init__(self):
         self.plan = []
-        self.active_algo = "UCS"
+        self.active_algo = "AStar"
         
 
     # -------------------------------------------------
@@ -44,12 +44,6 @@ class SearchAgent:
     # -------------------------------------------------
     # Manhattan Distance
     # -------------------------------------------------
-    def manhattan_distance(self, pos, goal):
-        x1, y1 = pos
-        x2, y2 = goal
-
-        return abs(x1 - x2) + abs(y1 - y2)
-
     def manhattan_distance(self, pos, goal):
         x1, y1 = pos
         x2, y2 = goal
@@ -322,6 +316,7 @@ class SearchAgent:
 
         return actions
 
+
     # -------------------------------------------------
     # Main agent function
     # -------------------------------------------------
@@ -368,7 +363,14 @@ class SearchAgent:
                 self.plan = self.ucs_search(
                     start, goal, grid_size, walls
                 )
-
+            elif self.active_algo == "AStar":
+                self.plan = self.astar_search(
+                    start,
+                    goal,
+                    walls,
+                    grid_size,
+                    heuristic_type="manhattan"
+                )
         # If no path was found
         if not self.plan:
             return "suck"
@@ -401,22 +403,3 @@ class SearchAgent:
         else:
             return "turn_left"
         
-if __name__ == "__main__":
-
-    agent = SearchAgent()
-
-    start = (0, 0)
-    goal = (3, 3)
-
-    grid_size = (5, 5)
-    walls = set()
-
-    path = agent.astar_search(
-        start,
-        goal,
-        walls,
-        grid_size,
-        heuristic_type="manhattan"
-    )
-
-    print("A* path:", path)
